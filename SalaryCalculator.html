@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK Net Salary Calculator</title>
+    <style>
+        /* Styles for readability */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #303039;
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size:xx-large;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3838b6d7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 22px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #result th, #result td {
+            padding: 10px;
+            text-align: left;
+            text-size-adjust: 5;
+            border-bottom: 1px solid #884545;
+        }
+        #result th {
+            background-color: #c4bdbd;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Net Salary Calculator</h1>
+    <div class="container">
+        <div>
+            <label for="grossSalary">Yearly Gross Salary:</label>
+            <input type="number" id="grossSalary" min="0" step="100" placeholder="Enter yearly gross salary">
+        </div>
+ 
+        <div>
+            <button onclick="calculateNetSalary()">Calculate Net Salary*</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+    
+    
+
+    <script>
+        function calculateIncomeTax(grossSalary) {
+            var taxBands = [
+                { min: 0, max: 12500, rate: 0 },
+                { min: 12501, max: 50000, rate: 0.2 },
+                { min: 50001, max: 150000, rate: 0.4 },
+                { min: 150001, max: Infinity, rate: 0.45 }
+            ];
+
+            var tax = 0;
+            var remainingSalary = grossSalary;
+
+            for (var i = 0; i < taxBands.length; i++) {
+                var band = taxBands[i];
+                if (remainingSalary <= 0) {
+                    break;
+                }
+
+                var taxableAmountInBand = Math.min(remainingSalary, band.max - band.min);
+                tax += taxableAmountInBand * band.rate;
+                remainingSalary -= taxableAmountInBand;
+            }
+
+            return tax;
+        }
+
+        function calculateNICRate(grossSalary) {
+            if (grossSalary <= 9568) {
+                return 0;
+            } else if (grossSalary <= 50270) {
+                return 0.10;
+            } else {
+                return 0.02;
+            }
+        }
+
+        function calculateNICContribution(grossSalary, nicRate) {
+            if (grossSalary <= 9568) {
+                return 0;
+            } else if (grossSalary <= 50270) {
+                return (grossSalary - 9568) * nicRate;
+            } else {
+                return (50270 - 9568) * 0.12 + (grossSalary - 50270) * nicRate;
+            }
+        }
+
+        function calculateNetSalary() {
+            var grossSalary = parseFloat(document.getElementById("grossSalary").value);
+           
+
+            var nicRate = calculateNICRate(grossSalary);
+            var nicContribution = calculateNICContribution(grossSalary, nicRate);
+
+            var taxableIncome = grossSalary - nicContribution;
+            var incomeTax = calculateIncomeTax(taxableIncome);
+
+            var taxAmount = incomeTax.toFixed(2);
+            var netSalary = (taxableIncome - incomeTax).toFixed(2);
+
+
+            //Calculate monthly , weekly,daily and hourly gross salary
+
+            var yearlyGrossSalary  = grossSalary.toFixed(2);
+            var monthlyGrossSalary = (grossSalary/12).toFixed(2);
+            var weeklyGrossSalary = (grossSalary/52).toFixed(2);
+            var dailyGrossSalary   = (grossSalary/260).toFixed(2);
+            var hourlyGrossSalary  = (grossSalary/(260*7.5)).toFixed(2);
+
+            // Calculate monthly, weekly, and daily net salary
+           // var yearlyNetSalary = netSalary.toFixed(2);
+            var monthlyNetSalary = (netSalary / 12).toFixed(2);
+            var weeklyNetSalary = (netSalary / 52).toFixed(2);
+            var dailyNetSalary = (netSalary / 260).toFixed(2); // 260 working days in a year including estimated 10 public holidays
+            var hourlyNetSalary = (netSalary/(260*7.5)).toFixed(2);
+
+            //calculate monthly , weekly , daily and hourly income tax
+
+            var yearlyIncomeTax  = incomeTax.toFixed(2);
+            var monthlyIncomeTax = (incomeTax/12).toFixed(2);
+            var weeklyIncomeTax = (incomeTax/52).toFixed(2);
+            var dailyIncomeTax   = (incomeTax/260).toFixed(2);
+            var hourlyIncomeTax  = (incomeTax/(260*7.5)).toFixed(2);
+
+            //calculate monthly , weekly , daily and hourly income tax
+
+            var yearlyNI  = nicContribution.toFixed(2);
+            var monthlyNI = (nicContribution/12).toFixed(2);
+            var weeklyNI = (nicContribution/52).toFixed(2);
+            var dailyNI   = (nicContribution/260).toFixed(2);
+            var hourlyNI  = (nicContribution/(260*7.5)).toFixed(2);
+
+        
+
+
+
+            var resultTable = "<table>";
+            resultTable += "<tr><th>Breakdown</th><th>Gross (£)</th><th> Net (£)</th><th>Tax (£)</th><th>NI (Yearly)</th></tr>";
+            resultTable += "<tr><td>Yearly</td><td>" + yearlyGrossSalary + "</td></td><td>" + netSalary + "</td><td>" + yearlyIncomeTax + "</td><td>" + yearlyNI + "</td></tr>";
+            resultTable += "<tr><td>Monthly</td><td>" + monthlyGrossSalary + "</td></td><td>" + monthlyNetSalary + "</td><td>" + monthlyIncomeTax + "</td><td>" + monthlyNI + "</td></tr>";
+            resultTable += "<tr><td>Weekly*</td><td>" + weeklyGrossSalary + "</td></td><td>" + weeklyNetSalary + "</td><td>" + weeklyIncomeTax + "</td><td>" + weeklyNI + "</td></tr>";
+            resultTable += "<tr><td>Daily*</td><td>" + dailyGrossSalary + "</td></td><td>" + dailyNetSalary + "</td><td>" + dailyIncomeTax + "</td><td>" + dailyNI + "</td></tr>";
+            resultTable += "<tr><td>Hourly*</td><td>" + hourlyGrossSalary + "</td></td><td>" + hourlyNetSalary + "</td><td>" + hourlyIncomeTax + "</td><td>" + hourlyNI + "</td></tr>";
+            resultTable += "</table>";
+
+
+            var result = document.getElementById("result");
+            result.innerHTML = resultTable;
+            
+        }
+        
+   
+ 
+    </script>
+    <div class="container"> 
+        <div><h9>*Salary calculated assuming 5 days working week and 10 public holidays . <br>&nbsp;Calculations based on 52 working weeks , 260 working days , 1950 working hours per year</h3></div>
+    </div>
+</body>
+</html>
